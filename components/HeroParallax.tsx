@@ -26,8 +26,8 @@ const HeroParallax: React.FC = () => {
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       
       {/* LAYER 1: FAR (Stars/Particles) - Moves slowly */}
-      <motion.div style={{ y: yFar }} className="absolute inset-0 opacity-40">
-        {[...Array(15)].map((_, i) => (
+      <motion.div style={{ y: yFar }} className="absolute inset-0 opacity-60">
+        {[...Array(30)].map((_, i) => (
           <div
             key={`star-${i}`}
             className="absolute bg-white rounded-full"
@@ -36,7 +36,7 @@ const HeroParallax: React.FC = () => {
               height: Math.random() * 2 + 1 + 'px',
               top: Math.random() * 100 + '%',
               left: Math.random() * 100 + '%',
-              opacity: Math.random() * 0.5 + 0.3,
+              opacity: Math.random() * 0.6 + 0.2,
             }}
           />
         ))}

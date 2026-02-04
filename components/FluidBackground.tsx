@@ -12,36 +12,40 @@ const FluidBackground: React.FC = () => {
       
       {/* Deep Crimson Shadow Blob */}
       <motion.div
-        className="absolute top-[-20%] left-[-20%] w-[100vw] h-[100vw] bg-[#3d000a] rounded-full mix-blend-screen filter blur-[120px] opacity-40"
+        className="absolute top-[-20%] left-[-20%] w-[100vw] h-[100vw] bg-[#3d000a] rounded-full mix-blend-screen filter blur-[120px] opacity-40 will-change-transform"
         animate={{
           scale: [1, 1.1, 1],
-          opacity: [0.3, 0.4, 0.3]
+          opacity: [0.3, 0.4, 0.3],
+          x: [0, 20, 0],
+          y: [0, -20, 0]
         }}
         transition={{
           duration: 15,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "linear"
         }}
       />
 
       {/* Muted Violet/Black Nebula */}
       <motion.div
-        className="absolute bottom-[-20%] right-[-10%] w-[90vw] h-[90vw] bg-[#1a0526] rounded-full mix-blend-screen filter blur-[100px] opacity-30"
+        className="absolute bottom-[-20%] right-[-10%] w-[90vw] h-[90vw] bg-[#1a0526] rounded-full mix-blend-screen filter blur-[100px] opacity-30 will-change-transform"
         animate={{
           scale: [1, 1.2, 1],
+          x: [0, -30, 0],
+          y: [0, 20, 0]
         }}
         transition={{
           duration: 20,
           repeat: Infinity,
-          ease: "easeInOut"
+          ease: "linear"
         }}
       />
 
       {/* Drifting Red Smoke Overlay (CSS Gradient Trick) */}
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_50%_50%,_#800020_0%,_transparent_60%)] mix-blend-overlay pointer-events-none" />
 
-      {/* Noise Texture for Cinematic Grain */}
-      <div className="absolute inset-0 opacity-[0.07] pointer-events-none" style={{
+      {/* Noise Texture for Cinematic Grain - Reduced opacity for performance */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
       }}></div>
 

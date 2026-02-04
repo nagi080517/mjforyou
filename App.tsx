@@ -17,7 +17,6 @@ import ProjectCard from './components/ProjectCard';
 import ProjectModal from './components/ProjectModal';
 import WhatsAppButton from './components/WhatsAppButton';
 import ContactForm from './components/ContactForm';
-import HeroShader from './components/HeroShader';
 import HeroParallax from './components/HeroParallax';
 import { Service, Project, PricingTier } from './types';
 
@@ -341,10 +340,9 @@ const App: React.FC = () => {
 
       {/* HERO SECTION */}
       <section id="hero" className="min-h-screen flex flex-col justify-center relative pt-20 overflow-hidden">
-        {/* Hero Background Shader */}
-        <div className="absolute inset-0 z-0">
-          <HeroShader />
-          {/* Heavy Gradients for Cinematic Feel and to allow text to pop over shader */}
+        {/* Hero Background - Optimized for Smoothness */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          {/* Heavy Gradients for Cinematic Feel and to allow text to pop */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#050000] via-transparent to-[#050000]" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050000] via-[#050000]/40 to-[#050000]" />
           <div className="absolute inset-0 bg-[#3d000a] mix-blend-overlay opacity-30" />
