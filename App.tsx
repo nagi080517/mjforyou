@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useState, useEffect } from 'react';
-import { motion, useScroll, AnimatePresence } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, useScroll, AnimatePresence, useTransform } from 'framer-motion';
 import { 
   Camera, Code, TrendingUp, Check, 
   Menu, X, ArrowRight, Instagram, 
   Linkedin, Mail, ChevronDown, MessageCircle, Star, Users, Smartphone, Zap
 } from 'lucide-react';
 import FluidBackground from './components/FluidBackground';
-import CustomCursor from './components/CustomCursor';
+import ComicStickers from './components/ComicStickers';
 import ServiceCard from './components/ServiceCard';
 import ProjectCard from './components/ProjectCard';
 import ProjectModal from './components/ProjectModal';
@@ -57,7 +57,7 @@ const PROJECTS: Project[] = [
   },
   { 
     id: '3', 
-    title: 'PERNIATHI NATURALS', 
+    title: 'PERNATI NATURALS', 
     category: 'E-Commerce App', 
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000',
     description: 'We build e-commerce app where all the purchases happen. A dedicated platform for natural products that streamlines the buying process.',
@@ -274,10 +274,43 @@ const GlowingWebStrands = () => {
   );
 };
 
+// --- SPLIT TEXT COMPONENT FOR CHAR ANIMATIONS ---
+// Fixed: Changed children prop to text prop to avoid TypeScript error about single child string.
+const SplitText = ({ text, className = "" }: { text: string, className?: string }) => {
+  return (
+    <span className={`inline-block whitespace-pre ${className}`}>
+      {text.split("").map((char, i) => (
+        <motion.span
+          key={i}
+          variants={{
+            hidden: { opacity: 0, y: 50, rotateX: 90 },
+            visible: { opacity: 1, y: 0, rotateX: 0 }
+          }}
+          transition={{ 
+            duration: 0.5, 
+            delay: i * 0.02, // Stagger effect
+            ease: [0.215, 0.61, 0.355, 1] 
+          }}
+          className="inline-block origin-bottom"
+        >
+          {char}
+        </motion.span>
+      ))}
+    </span>
+  );
+};
+
 const App: React.FC = () => {
-  const { scrollYProgress } = useScroll();
+  const { scrollY, scrollYProgress } = useScroll();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [contactInitialMessage, setContactInitialMessage] = useState('');
+
+  // Scroll Transforms for Hero Text (Parallax Effect)
+  const xLine1 = useTransform(scrollY, [0, 800], [0, -150]);
+  const xLine2 = useTransform(scrollY, [0, 800], [0, 150]);
+  const xLine3 = useTransform(scrollY, [0, 800], [0, -150]);
+  const opacityText = useTransform(scrollY, [0, 400], [1, 0.2]);
 
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
@@ -287,10 +320,29 @@ const App: React.FC = () => {
     }
   };
 
+  const handlePackageSelect = (packageName: string) => {
+    const msg = `I am interested in the ${packageName} alliance tier. Please provide more details on this package.`;
+    setContactInitialMessage(msg);
+    scrollToSection('contact');
+  };
+
+  const handleServiceSelect = (serviceTitle: string) => {
+    const msg = `I am interested in the ${serviceTitle} service. Please provide more details.`;
+    setContactInitialMessage(msg);
+    scrollToSection('contact');
+  };
+
+  const handleProjectContact = (projectTitle: string) => {
+    setSelectedProject(null);
+    const msg = `I was looking at the ${projectTitle} mission case study and would like more info.`;
+    setContactInitialMessage(msg);
+    scrollToSection('contact');
+  };
+
   return (
-    <div className="relative min-h-screen text-[#e0e0e0] selection:bg-[#ff3366] selection:text-white cursor-auto md:cursor-none overflow-x-hidden">
-      <CustomCursor />
+    <div className="relative min-h-screen text-[#e0e0e0] selection:bg-[#ff3366] selection:text-white overflow-x-hidden">
       <FluidBackground />
+      <ComicStickers />
       <WhatsAppButton />
       
       {/* Project Details Modal */}
@@ -298,7 +350,8 @@ const App: React.FC = () => {
         {selectedProject && (
           <ProjectModal 
             project={selectedProject} 
-            onClose={() => setSelectedProject(null)} 
+            onClose={() => setSelectedProject(null)}
+            onContact={() => handleProjectContact(selectedProject.title)}
           />
         )}
       </AnimatePresence>
@@ -407,14 +460,41 @@ const App: React.FC = () => {
               </span>
             </motion.div>
 
-            <motion.h1 
-              variants={{ hidden: { y: 50, opacity: 0, scale: 0.95 }, visible: { y: 0, opacity: 1, scale: 1 } }}
-              className="text-5xl md:text-8xl lg:text-[7rem] font-heading font-bold leading-[0.9] tracking-tighter mb-8 text-white drop-shadow-2xl"
+            {/* SCROLL-DRIVEN PARALLAX HEADLINE */}
+            <motion.div 
+              style={{ opacity: opacityText }}
+              className="text-5xl md:text-8xl lg:text-[7rem] font-heading font-bold leading-[0.9] tracking-tighter mb-8 text-white drop-shadow-2xl overflow-visible"
             >
-              BECAUSE ALL DON'T<br />
-              HAVE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff3366] via-[#ffb6c1] to-white text-glow italic pr-4">MJ</span> IN<br />
-              THEIR LIFE...
-            </motion.h1>
+              {/* Line 1 - Moves Left */}
+              <motion.div style={{ x: xLine1 }} className="block">
+                {/* Fixed: passed string as text prop */}
+                <SplitText text="BECAUSE ALL DON'T" />
+              </motion.div>
+
+              {/* Line 2 - Moves Right */}
+              <motion.div style={{ x: xLine2 }} className="block">
+                 {/* Fixed: passed string as text prop */}
+                 <SplitText text="HAVE " />
+                 <motion.span 
+                    variants={{
+                      hidden: { opacity: 0, scale: 0 },
+                      visible: { opacity: 1, scale: 1 }
+                    }}
+                    transition={{ delay: 0.5, type: 'spring' }}
+                    className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#ff3366] via-[#ffb6c1] to-white text-glow italic pr-4"
+                  >
+                    MJ
+                 </motion.span>
+                 {/* Fixed: passed string as text prop */}
+                 <SplitText text="IN" />
+              </motion.div>
+
+              {/* Line 3 - Moves Left */}
+              <motion.div style={{ x: xLine3 }} className="block">
+                 {/* Fixed: passed string as text prop */}
+                 <SplitText text="THEIR LIFE..." />
+              </motion.div>
+            </motion.div>
 
             <motion.div 
                variants={{ hidden: { width: 0 }, visible: { width: '100px' } }}
@@ -465,7 +545,7 @@ const App: React.FC = () => {
       {/* STATS BANNER */}
       <section className="py-16 border-y border-[#ff3366]/10 bg-black relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#3d000a_0%,_transparent_70%)] opacity-30" />
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-12 relative z-10">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
           {STATS.map((stat, i) => (
             <motion.div 
               key={i}
@@ -478,18 +558,6 @@ const App: React.FC = () => {
               <div className="text-xs text-[#ffb6c1] uppercase tracking-[0.2em] font-bold">{stat.label}</div>
             </motion.div>
           ))}
-           <div className="flex items-center justify-center md:justify-start pl-6">
-             <div className="flex -space-x-4">
-               {[1,2,3].map(i => (
-                 <div key={i} className="w-12 h-12 rounded-full border border-[#ff3366] bg-black overflow-hidden relative group cursor-pointer">
-                    <img src={`https://i.pravatar.cc/150?img=${i+25}`} alt="client" className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
-                 </div>
-               ))}
-               <div className="w-12 h-12 rounded-full border border-[#ff3366] bg-black flex items-center justify-center text-[#ff3366] font-bold text-xs relative z-10">
-                 +20
-               </div>
-             </div>
-          </div>
         </div>
       </section>
 
@@ -513,7 +581,12 @@ const App: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {SERVICES.map((service, i) => (
-              <ServiceCard key={service.id} service={service} index={i} />
+              <ServiceCard 
+                key={service.id} 
+                service={service} 
+                index={i} 
+                onDetailsClick={handleServiceSelect}
+              />
             ))}
           </div>
         </div>
@@ -570,7 +643,7 @@ const App: React.FC = () => {
                   tier.recommended 
                   ? 'border-[#ff3366] bg-gradient-to-b from-[#ff3366]/10 to-black' 
                   : 'border-white/10 bg-black/40'
-                } backdrop-blur-md flex flex-col hover:-translate-y-2 transition-transform duration-500`}
+                } backdrop-blur-md flex flex-col transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,51,102,0.15)] group`}
               >
                 {tier.recommended && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#ff3366] text-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest shadow-[0_0_15px_#ff3366]">
@@ -591,10 +664,11 @@ const App: React.FC = () => {
                 </ul>
 
                 <button 
-                  className={`w-full py-4 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 ${
+                  onClick={() => handlePackageSelect(tier.name)}
+                  className={`w-full py-4 rounded-sm font-bold uppercase tracking-widest text-xs transition-all duration-300 hover:scale-105 ${
                     tier.recommended 
-                    ? 'bg-[#ff3366] text-white hover:bg-[#cc1f4b] shadow-[0_0_20px_rgba(255,51,102,0.3)]' 
-                    : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30'
+                    ? 'bg-[#ff3366] text-white hover:bg-[#cc1f4b] shadow-[0_0_20px_rgba(255,51,102,0.3)] hover:shadow-[0_0_30px_rgba(255,51,102,0.5)]' 
+                    : 'bg-white/5 text-white border border-white/10 hover:bg-white/10 hover:border-white/30 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]'
                   }`}
                   data-hover="true"
                 >
@@ -667,14 +741,14 @@ const App: React.FC = () => {
              <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#6600cc]/10 rounded-full blur-[100px]" />
 
              <h2 className="text-4xl md:text-7xl font-heading font-bold mb-8 relative z-10 text-white">
-               NEED A <span className="text-[#ff3366] text-glow">PARTNER?</span>
+               NEED A <span className="text-[#ff3366] text-glow">DIGITAL MARKETER?</span>
              </h2>
              <p className="text-lg text-gray-400 mb-12 max-w-xl mx-auto relative z-10 font-light">
                The city needs saving. Let's turn your vision into reality. Book a secure line, transmit your request below, or chat directly.
              </p>
              
              {/* Form Component */}
-             <ContactForm />
+             <ContactForm initialMessage={contactInitialMessage} />
              
              <div className="flex flex-col md:flex-row gap-6 justify-center relative z-10 mt-12 pt-12 border-t border-white/10">
                <a 

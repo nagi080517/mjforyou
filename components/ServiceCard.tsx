@@ -11,9 +11,10 @@ import { Service } from '../types';
 interface ServiceCardProps {
   service: Service;
   index: number;
+  onDetailsClick: (title: string) => void;
 }
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, index, onDetailsClick }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30, scale: 0.95, rotate: -1 }}
@@ -44,7 +45,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, index }) => {
           
           <button 
             className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest group/btn text-white hover:text-[#ffb6c1] transition-colors"
-            onClick={() => console.log(service.title)}
+            onClick={() => onDetailsClick(service.title)}
           >
             Details
             <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform text-[#ff3366]" />

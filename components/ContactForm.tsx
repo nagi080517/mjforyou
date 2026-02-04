@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: Apache-2.0
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Send, AlertCircle, CheckCircle } from 'lucide-react';
 
-const ContactForm: React.FC = () => {
+interface ContactFormProps {
+  initialMessage?: string;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ initialMessage = '' }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -17,6 +21,16 @@ const ContactForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    if (initialMessage) {
+      setFormData(prev => ({ 
+        ...prev, 
+        message: initialMessage,
+        subject: prev.subject || 'Mission Inquiry'
+      }));
+    }
+  }, [initialMessage]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -106,7 +120,7 @@ ${formData.message}`;
             name="name"
             value={formData.name}
             onChange={handleChange}
-            className={`w-full bg-black/50 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-colors backdrop-blur-sm`}
+            className={`w-full bg-black/50 border ${errors.name ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-all duration-300 backdrop-blur-sm hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]`}
             placeholder="Peter Parker"
           />
           {errors.name && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle size={12} /> {errors.name}</p>}
@@ -120,7 +134,7 @@ ${formData.message}`;
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className={`w-full bg-black/50 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-colors backdrop-blur-sm`}
+            className={`w-full bg-black/50 border ${errors.email ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-all duration-300 backdrop-blur-sm hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]`}
             placeholder="spidey@dailybugle.com"
           />
            {errors.email && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle size={12} /> {errors.email}</p>}
@@ -135,7 +149,7 @@ ${formData.message}`;
           name="subject"
           value={formData.subject}
           onChange={handleChange}
-          className={`w-full bg-black/50 border ${errors.subject ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-colors backdrop-blur-sm`}
+          className={`w-full bg-black/50 border ${errors.subject ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-all duration-300 backdrop-blur-sm hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]`}
           placeholder="Project Collaboration"
         />
          {errors.subject && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle size={12} /> {errors.subject}</p>}
@@ -149,7 +163,7 @@ ${formData.message}`;
           rows={5}
           value={formData.message}
           onChange={handleChange}
-          className={`w-full bg-black/50 border ${errors.message ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-colors resize-none backdrop-blur-sm`}
+          className={`w-full bg-black/50 border ${errors.message ? 'border-red-500' : 'border-white/10'} rounded-sm p-4 text-white focus:border-[#ff3366] focus:outline-none transition-all duration-300 resize-none backdrop-blur-sm hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(255,255,255,0.05)]`}
           placeholder="Brief us on your mission requirements..."
         />
          {errors.message && <p className="text-red-500 text-xs flex items-center gap-1"><AlertCircle size={12} /> {errors.message}</p>}
@@ -158,7 +172,7 @@ ${formData.message}`;
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-[#ff3366] text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-[#cc1f4b] transition-all shadow-[0_0_20px_rgba(255,51,102,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
+        className="w-full bg-[#ff3366] text-white font-bold uppercase tracking-widest py-4 rounded-sm hover:bg-[#cc1f4b] transition-all shadow-[0_0_20px_rgba(255,51,102,0.4)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,51,102,0.6)]"
         data-hover="true"
       >
         {isSubmitting ? 'Encrypting & Sending...' : <><Send size={18} className="group-hover:translate-x-1 transition-transform" /> Establish Connection</>}

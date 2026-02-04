@@ -11,9 +11,10 @@ import { Project } from '../types';
 interface ProjectModalProps {
   project: Project;
   onClose: () => void;
+  onContact: () => void;
 }
 
-const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
+const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, onContact }) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
       {/* Backdrop */}
@@ -108,8 +109,11 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
               )}
 
               <div className="pt-6 border-t border-white/5">
-                <button className="w-full py-4 bg-[#ff3366] hover:bg-[#cc1f4b] text-white font-bold uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(255,51,102,0.2)]">
-                  Launch Live Preview
+                <button 
+                  onClick={onContact}
+                  className="w-full py-4 bg-[#ff3366] hover:bg-[#cc1f4b] text-white font-bold uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(255,51,102,0.2)] hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,51,102,0.4)]"
+                >
+                  Contact for More Info
                 </button>
               </div>
             </div>
