@@ -17,6 +17,8 @@ import ProjectCard from './components/ProjectCard';
 import ProjectModal from './components/ProjectModal';
 import WhatsAppButton from './components/WhatsAppButton';
 import ContactForm from './components/ContactForm';
+import HeroShader from './components/HeroShader';
+import HeroParallax from './components/HeroParallax';
 import { Service, Project, PricingTier } from './types';
 
 // DATA
@@ -174,108 +176,7 @@ const STATS = [
   { label: 'Years Experience', value: '2+' },
 ];
 
-// Particle Component for Hero
-const FloatingParticles = () => {
-  return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-[#ff3366] rounded-full opacity-0"
-          initial={{ 
-            x: Math.random() * 100 + "%", 
-            y: "100%", 
-            opacity: 0 
-          }}
-          animate={{ 
-            y: "-20%", 
-            opacity: [0, 0.6, 0],
-            scale: [0.5, 1.5, 0.5]
-          }}
-          transition={{ 
-            duration: Math.random() * 10 + 10, 
-            repeat: Infinity, 
-            delay: Math.random() * 10,
-            ease: "linear"
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
-// Pulsing Web Strands Component
-const GlowingWebStrands = () => {
-  return (
-    <div className="absolute inset-0 pointer-events-none z-0">
-       <svg className="absolute w-full h-full opacity-40" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {/* Top Left to Bottom Right */}
-          <motion.path
-            d="M0,0 Q50,50 100,100"
-            stroke="url(#web-gradient)"
-            strokeWidth="0.2"
-            fill="none"
-            animate={{
-              strokeWidth: ["0.1", "0.3", "0.1"],
-              strokeOpacity: [0.3, 0.8, 0.3],
-              d: ["M0,0 Q50,45 100,100", "M0,0 Q55,50 100,100", "M0,0 Q50,45 100,100"]
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          {/* Top Right to Bottom Left */}
-          <motion.path
-            d="M100,0 Q50,50 0,100"
-            stroke="url(#web-gradient)"
-            strokeWidth="0.2"
-            fill="none"
-            animate={{
-              strokeWidth: ["0.1", "0.3", "0.1"],
-              strokeOpacity: [0.3, 0.8, 0.3],
-              d: ["M100,0 Q55,50 0,100", "M100,0 Q45,50 0,100", "M100,0 Q55,50 0,100"]
-            }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          {/* Random connecting strand */}
-          <motion.path
-            d="M20,0 Q50,80 80,0"
-            stroke="url(#web-gradient)"
-            strokeWidth="0.1"
-            fill="none"
-             animate={{
-              strokeOpacity: [0.1, 0.5, 0.1],
-              strokeWidth: ["0.05", "0.15", "0.05"],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          />
-          
-          <defs>
-            <linearGradient id="web-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="transparent" />
-              <stop offset="20%" stopColor="#ff3366" />
-              <stop offset="50%" stopColor="#ffb6c1" />
-              <stop offset="80%" stopColor="#ff3366" />
-              <stop offset="100%" stopColor="transparent" />
-            </linearGradient>
-          </defs>
-       </svg>
-    </div>
-  );
-};
-
 // --- SPLIT TEXT COMPONENT FOR CHAR ANIMATIONS ---
-// Fixed: Changed children prop to text prop to avoid TypeScript error about single child string.
 const SplitText = ({ text, className = "" }: { text: string, className?: string }) => {
   return (
     <span className={`inline-block whitespace-pre ${className}`}>
@@ -312,6 +213,7 @@ const App: React.FC = () => {
   const xLine3 = useTransform(scrollY, [0, 800], [0, -150]);
   const opacityText = useTransform(scrollY, [0, 400], [1, 0.2]);
 
+  // Use this for buttons to trigger smooth scroll programmatically
   const scrollToSection = (id: string) => {
     setMobileMenuOpen(false);
     const element = document.getElementById(id);
@@ -374,15 +276,22 @@ const App: React.FC = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-10 text-xs font-bold tracking-[0.2em] uppercase">
           {['Services', 'Work', 'Pricing', 'Team', 'About'].map((item) => (
-            <button 
+            <a 
               key={item} 
-              onClick={() => scrollToSection(item.toLowerCase())}
+              href={`#${item.toLowerCase() === 'about' ? 'team' : item.toLowerCase()}`}
+              onClick={(e) => {
+                // If specific offset control is needed, we could prevent default and use scrollToSection.
+                // But native anchor + CSS scroll-behavior: smooth + scroll-padding is often better for a11y.
+                // However, we'll use scrollToSection to guarantee the offset and behavior consistency in this SPA context.
+                e.preventDefault();
+                scrollToSection(item.toLowerCase() === 'about' ? 'team' : item.toLowerCase());
+              }}
               className="hover:text-[#ff3366] transition-colors relative group"
               data-hover="true"
             >
               {item}
               <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-[#ff3366] group-hover:w-full transition-all duration-300" />
-            </button>
+            </a>
           ))}
         </div>
 
@@ -414,13 +323,17 @@ const App: React.FC = () => {
             className="fixed inset-0 z-30 bg-[#050000] flex flex-col items-center justify-center gap-8 md:hidden"
           >
             {['Services', 'Work', 'Pricing', 'Team', 'Contact'].map((item) => (
-              <button
+              <a
                 key={item}
-                onClick={() => scrollToSection(item.toLowerCase())}
+                href={`#${item.toLowerCase()}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection(item.toLowerCase());
+                }}
                 className="text-3xl font-heading font-bold hover:text-[#ff3366] transition-colors tracking-widest uppercase"
               >
                 {item}
-              </button>
+              </a>
             ))}
           </motion.div>
         )}
@@ -428,22 +341,17 @@ const App: React.FC = () => {
 
       {/* HERO SECTION */}
       <section id="hero" className="min-h-screen flex flex-col justify-center relative pt-20 overflow-hidden">
-        {/* Hero Background Image */}
+        {/* Hero Background Shader */}
         <div className="absolute inset-0 z-0">
-          <img 
-             src="https://images.hdqwalls.com/wallpapers/spider-gwen-4k-artwork-j0.jpg" 
-             alt="Spider Gwen Theme" 
-             className="w-full h-full object-cover opacity-80"
-             style={{ objectPosition: 'center 20%' }} 
-          />
-          {/* Heavy Gradients for Cinematic Feel */}
+          <HeroShader />
+          {/* Heavy Gradients for Cinematic Feel and to allow text to pop over shader */}
           <div className="absolute inset-0 bg-gradient-to-b from-[#050000] via-transparent to-[#050000]" />
           <div className="absolute inset-0 bg-gradient-to-r from-[#050000] via-[#050000]/40 to-[#050000]" />
-          <div className="absolute inset-0 bg-[#3d000a] mix-blend-overlay opacity-40" />
+          <div className="absolute inset-0 bg-[#3d000a] mix-blend-overlay opacity-30" />
         </div>
-
-        <FloatingParticles />
-        <GlowingWebStrands />
+        
+        {/* Multi-Layered Parallax Effect */}
+        <HeroParallax />
 
         <div className="max-w-7xl mx-auto px-6 md:px-20 z-10 w-full relative">
           <motion.div
@@ -467,13 +375,11 @@ const App: React.FC = () => {
             >
               {/* Line 1 - Moves Left */}
               <motion.div style={{ x: xLine1 }} className="block">
-                {/* Fixed: passed string as text prop */}
                 <SplitText text="BECAUSE ALL DON'T" />
               </motion.div>
 
               {/* Line 2 - Moves Right */}
               <motion.div style={{ x: xLine2 }} className="block">
-                 {/* Fixed: passed string as text prop */}
                  <SplitText text="HAVE " />
                  <motion.span 
                     variants={{
@@ -485,13 +391,11 @@ const App: React.FC = () => {
                   >
                     MJ
                  </motion.span>
-                 {/* Fixed: passed string as text prop */}
                  <SplitText text="IN" />
               </motion.div>
 
               {/* Line 3 - Moves Left */}
               <motion.div style={{ x: xLine3 }} className="block">
-                 {/* Fixed: passed string as text prop */}
                  <SplitText text="THEIR LIFE..." />
               </motion.div>
             </motion.div>

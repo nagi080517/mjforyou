@@ -92,19 +92,44 @@ ${formData.message}`;
   if (isSuccess) {
     return (
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="text-center p-12 bg-[#ff3366]/10 border border-[#ff3366]/30 rounded-sm mt-8"
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="text-center p-12 bg-[#ff3366]/10 border border-[#ff3366]/30 rounded-sm mt-8 relative overflow-hidden backdrop-blur-sm"
       >
-        <CheckCircle className="w-16 h-16 text-[#ff3366] mx-auto mb-4" />
-        <h3 className="text-2xl font-bold text-white mb-2 font-heading">Transmission Encoded</h3>
-        <p className="text-gray-400">Redirecting to secure frequency (WhatsApp) to complete transmission.</p>
-        <button 
+        {/* Subtle Scanning Line Animation */}
+        <motion.div 
+          className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#ff3366]/50 to-transparent"
+          animate={{ top: ["0%", "100%"] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+        />
+
+        <motion.div
+          initial={{ scale: 0, rotate: -45 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+        >
+          <CheckCircle className="w-16 h-16 text-[#ff3366] mx-auto mb-4 drop-shadow-[0_0_15px_rgba(255,51,102,0.6)]" />
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h3 className="text-2xl font-bold text-white mb-2 font-heading tracking-wide">Transmission Encoded</h3>
+          <p className="text-gray-400 font-light">Redirecting to secure frequency (WhatsApp) to complete transmission.</p>
+        </motion.div>
+        
+        <motion.button 
           onClick={() => setIsSuccess(false)}
-          className="mt-6 text-[#ff3366] text-sm font-bold uppercase tracking-widest hover:text-white transition-colors"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8 }}
+          className="mt-8 text-[#ff3366] text-xs font-bold uppercase tracking-widest hover:text-white transition-colors border-b border-transparent hover:border-white pb-1"
         >
           Send Another Transmission
-        </button>
+        </motion.button>
       </motion.div>
     );
   }
